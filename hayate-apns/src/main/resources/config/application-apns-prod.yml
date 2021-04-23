@@ -1,0 +1,3 @@
+apns:
+  production: true
+  credentialFilename: credentialFilename

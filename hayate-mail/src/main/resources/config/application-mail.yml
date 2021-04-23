@@ -1,0 +1,14 @@
+verify-mail:
+  host: smtpdm.aliyun.com
+  port: 465
+  username: hayate
+  password: hayate
+  fromAddress: flameyagami@gmail.com
+  auth: true
+feedback-mail:
+  host: smtpdm.aliyun.com
+  port: 465
+  username: hayate
+  password: hayate
+  fromAddress: flameyagami@gmail.com
+  auth: true

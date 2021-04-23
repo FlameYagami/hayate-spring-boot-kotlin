@@ -1,0 +1,17 @@
+user:
+  accountType: email
+serverCountry: cn
+
+baseUrl:
+  host: http://www.reinforce.host/
+  avatar: http://www.reinforce.host/userIcons/
+  app: http://www.reinforce.host/app/
+
+filePath:
+  avatar: /home/hayate/userIcons/
+  app: /home/hayate/app/
+  fileLogs:
+    app: /home/hayate/filelogs/app/
+
+logging:
+  config: classpath:config/log4j2-us.yml

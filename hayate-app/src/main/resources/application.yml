@@ -1,0 +1,8 @@
+spring:
+  profiles:
+    # 开发环境
+    active: common-dev, mail, apns-dev, dev
+    # 美服环境
+#    active: common-us, mail, apns-prod, us
+    # 国服环境
+#    active: common-cn, mail, apns-prod, cn

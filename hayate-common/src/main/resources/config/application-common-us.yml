@@ -1,0 +1,50 @@
+server:
+  port: 4985216
+
+spring:
+  redis:
+    database: 0
+    host: 127.0.0.1
+    port: 6379
+    password: 123456
+    lettuce:
+      pool:
+        max-active: 8
+        max-wait: -1
+        max-idle: 8
+        min-idle: 0
+    timeout: 10000
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      url: jdbc:mysql://127.0.0.1:3306/schwertkreuz?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=UTC&zeroDateTimeBehavior=convertToNull
+      username: flame
+      password: ehG2zN/ATw6v5XmzlpxF40CZHHsTx1ZcVIVouw/o4lQE3MehlC8l7JziuR2H1STTj5vwfYPAJHa6k371aicrdg==
+      connection-properties: config.decrypt=true;config.decrypt.key=MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKDGJuYo4E0zNobLOQOdbeSpv4vQJJv+VaqA5UsCwloKu2th60+2P5V1XrXj7E4ayxThrVzN5lvI9zEjDYewmjcCAwEAAQ==
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      filters: config,stat,wall,slf4j
+      initialSize: 5
+      maxActive: 10
+      maxPoolPreparedStatementPerConnectionSize: 50
+      maxWait: 60000
+      minEvictableIdleTimeMillis: 300000
+      minIdle: 10
+      poolPreparedStatements: true
+      testOnBorrow: false
+      testOnReturn: false
+      testWhileIdle: true
+      timeBetweenEvictionRunsMillis: 600000
+      validationQuery: SELECT 1 from dual
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 20MB
+      max-request-size: 6MB
+
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+
+swagger:
+  show: false
+  basePackage: com.hayate
