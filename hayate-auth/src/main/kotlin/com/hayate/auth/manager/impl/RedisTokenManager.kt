@@ -36,7 +36,7 @@ class RedisTokenManager @Autowired constructor(private val stringRedisTemplate: 
             // 存储Token并设置过期时间
             stringRedisTemplate.opsForValue()[USER_ID_PREFIX + userId, token, AuthConstant.TOKEN_EXPIRE.toLong()] = TimeUnit.DAYS
         } catch (e: Exception) {
-            log.error("Create token encrypt error: " + e.localizedMessage)
+            log.error("Create token encrypt error: ${e.localizedMessage}")
             e.printStackTrace()
         }
         return token

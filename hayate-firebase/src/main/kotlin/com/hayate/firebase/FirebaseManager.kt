@@ -65,10 +65,10 @@ object FirebaseManager {
                 }
             }
             if(failedTokens.isNotEmpty()) {
-                log.error("Firebase push failed: {}", failedTokens)
+                log.error("Firebase push failed: $failedTokens")
             }
         } catch(e: Exception) {
-            log.error("Firebase push error: {}", e.message)
+            log.error("Firebase push error: ${e.message}")
         }
     }
 }

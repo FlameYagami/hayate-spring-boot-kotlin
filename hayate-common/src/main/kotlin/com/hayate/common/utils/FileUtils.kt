@@ -27,7 +27,7 @@ object FileUtils {
             fileOutputStream.close()
             true
         } catch(e: Exception) {
-            log.error("Write file error => " + e.message)
+            log.error("Write file error => ${e.message}")
             false
         }
     }
@@ -37,7 +37,7 @@ object FileUtils {
         if(file.exists()) {
             return file.delete()
         }
-        log.error("Delete file error => file path({}) is not exist", filePath)
+        log.error("Delete file error => file path($filePath) is not exist")
         return false
     }
 }

@@ -54,20 +54,20 @@ class LoginController @Autowired constructor(
     fun signUp(@RequestBody request: SignUpRequest): ApiResult<Any> {
         // 检测账号有效性
         if (!validateAccount(request.account.toString())) {
-            log.error("Sign up error: invalid account({})", request.account)
+            log.error("Sign up error: invalid account(${request.account})")
             return ApiResult.error(ResultStatus.INVALID_ACCOUNT)
         }
 
         // 检测用户是否存在
         if (iUserService.checkAccountExist(request.account.toString())) {
-            log.error("Sign up error: account({}) already exist", request.account)
+            log.error("Sign up error: account(${request.account}) already exist")
             return ApiResult.error(ResultStatus.ACCOUNT_ALREADY_EXIST)
         }
 
         // 检测密码是否有效
         val passwordResult = iUserService.validatePassword(request.password.toString())
         if (!passwordResult.isValid) {
-            log.error("Sign up error: invalid password({})", passwordResult.password.toString())
+            log.error("Sign up error: invalid password(${passwordResult.password.toString()})")
             return ApiResult.error(ResultStatus.INVALID_PASSWORD)
         }
 
@@ -80,7 +80,7 @@ class LoginController @Autowired constructor(
                 return ApiResult.ok()
             }
         }
-        log.error("Sign up error: account({}) sign up failed", request.account)
+        log.error("Sign up error: account(${request.account}) sign up failed")
         return ApiResult.error(ResultStatus.FAILED)
     }
 
@@ -93,7 +93,7 @@ class LoginController @Autowired constructor(
     fun signIn(account: String, password: String): ApiResult<Any> {
         // 检测账号有效性
         if (!validateAccount(account)) {
-            log.error("Sign in error: invalid account({})", account)
+            log.error("Sign in error: invalid account($account)")
             return ApiResult.error(ResultStatus.INVALID_ACCOUNT)
         }
         val user = iUserService.findByAccount(account)
@@ -106,7 +106,7 @@ class LoginController @Autowired constructor(
                 return ApiResult.ok(userResponse)
             }
         }
-        log.error("Sign in error: account({}) or password error", account)
+        log.error("Sign in error: account($account) or password error")
         return ApiResult.error(ResultStatus.ACCOUNT_OR_PASSWORD_ERROR)
     }
 
@@ -119,7 +119,7 @@ class LoginController @Autowired constructor(
     fun signOut(userId: Long, uuid: String?): ApiResult<Any> {
         val user = iUserService.getById(userId)
         if (user == null) {
-            log.error("Sign out error: account userId({}) is not found", userId)
+            log.error("Sign out error: account userId($userId) is not found")
             return ApiResult.error(ResultStatus.ACCOUNT_NOT_FOUND)
         }
         authTokenManager.deleteToken(userId)
@@ -144,19 +144,19 @@ class LoginController @Autowired constructor(
     fun sendVerificationCode(account: String, sendType: String): ApiResult<Any> {
         // 判断账号合不合法
         if (!validateAccount(account)) {
-            log.error("Send verification code error: invalid account({})", account)
+            log.error("Send verification code error: invalid account($account)")
             return ApiResult.error(ResultStatus.INVALID_ACCOUNT)
         }
 
         // 判断是注册还是忘记密码
         if (UserConstant.SIGN_UP_TYPE.equals(sendType, ignoreCase = true)) {
             if (iUserService.checkAccountExist(account)) {
-                log.error("Send verification code error: account({}) already exist", account)
+                log.error("Send verification code error: account($account) already exist")
                 return ApiResult.error(ResultStatus.ACCOUNT_ALREADY_EXIST)
             }
         } else if (UserConstant.FORGET_PASSWORD_TYPE.equals(sendType, ignoreCase = true)) {
             if (!iUserService.checkAccountExist(account)) {
-                log.error("Send verification code error: account({}) is not exist", account)
+                log.error("Send verification code error: account($account) is not exist")
                 return ApiResult.error(ResultStatus.ACCOUNT_NOT_FOUND)
             }
         } else {
@@ -178,7 +178,7 @@ class LoginController @Autowired constructor(
         if (sendResult && dbResult) {
             return ApiResult.ok()
         }
-        log.error("Send verification code error: send verification code to account({}) failed", account)
+        log.error("Send verification code error: send verification code to account($account) failed")
         return ApiResult.error(ResultStatus.SEND_VERIFY_CODE_FAIL)
     }
 
@@ -191,13 +191,13 @@ class LoginController @Autowired constructor(
     fun validateForgetPasswordCode(account: String, verificationCode: String): ApiResult<Any> {
         // 检测账号有效性
         if (!validateAccount(account)) {
-            log.error("Validate forget password verification code error: invalid account({}", account)
+            log.error("Validate forget password verification code error: invalid account($account)")
             return ApiResult.error(ResultStatus.INVALID_ACCOUNT)
         }
 
         // 检测用户是否存在
         if (!iUserService.checkAccountExist(account)) {
-            log.error("Validate forget password verification code error: account({}) is not found", account)
+            log.error("Validate forget password verification code error: account($account) is not found")
             return ApiResult.error(ResultStatus.ACCOUNT_NOT_FOUND)
         }
 
@@ -217,20 +217,20 @@ class LoginController @Autowired constructor(
     fun forgetPassword(account: String, newPassword: String, verificationCode: String): ApiResult<Any> {
         // 检测账号有效性
         if (!validateAccount(account)) {
-            log.error("Forget Password error: invalid account({})", account)
+            log.error("Forget Password error: invalid account($account)")
             return ApiResult.error(ResultStatus.INVALID_ACCOUNT)
         }
 
         // 检测用户是否存在
         if (!iUserService.checkAccountExist(account)) {
-            log.error("Forget Password error: account({}) is not found", account)
+            log.error("Forget Password error: account($account) is not found")
             return ApiResult.error(ResultStatus.ACCOUNT_NOT_FOUND)
         }
 
         // 检测密码是否有效
         val passwordResult = iUserService.validatePassword(newPassword)
         if (!passwordResult.isValid) {
-            log.error("Forget Password error: invalid password({})", passwordResult.password)
+            log.error("Forget Password error: invalid password(${passwordResult.password})")
             return ApiResult.error(ResultStatus.INVALID_PASSWORD)
         }
 
@@ -242,7 +242,7 @@ class LoginController @Autowired constructor(
                 return ApiResult.ok()
             }
         }
-        log.error("Forget Password error: account({}) change password failed", account)
+        log.error("Forget Password error: account($account) change password failed")
         return ApiResult.error(ResultStatus.FAILED)
     }
 
@@ -258,7 +258,7 @@ class LoginController @Autowired constructor(
                 emailRegex.matcher(account)
             }
             else -> {
-                log.error("Account type error: accountType({}) can not match", accountType)
+                log.error("Account type error: accountType($accountType) can not match")
                 throw ResultException(ResultStatus.FAILED)
             }
         }
@@ -270,7 +270,7 @@ class LoginController @Autowired constructor(
         // 检测验证码是否正确
         val verifyCode = iVerificationCodeService.findByAccount(account)
         if (verifyCode == null || verifyCode.code != verificationCode) {
-            log.error("Validate verification code error: account({}) verification code({}) is not match", account, verificationCode)
+            log.error("Validate verification code error: account($account) verification code($verificationCode) is not match")
             throw ResultException(ResultStatus.VERIFY_CODE_NOT_MATCH)
         }
 
@@ -278,7 +278,7 @@ class LoginController @Autowired constructor(
         val currentTime = Date().time
         val expireTime = verifyCode.updateDate?.time ?: 0 + UserConstant.VERIFICATION_CODE_EXPIRE_DURATION
         if (currentTime - expireTime > 0) {
-            log.error("Validate verification code error: account({}) verification code({}) was expired", account, verificationCode)
+            log.error("Validate verification code error: account($account) verification code($verificationCode) was expired")
             throw ResultException(ResultStatus.VERIFY_CODE_EXPIRED)
         }
         return true

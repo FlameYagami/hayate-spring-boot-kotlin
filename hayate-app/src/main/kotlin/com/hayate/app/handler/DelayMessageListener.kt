@@ -26,7 +26,7 @@ class DelayMessageListener : IDelayTaskTimeoutListener {
 
     override fun complete(delayMessage: DelayMessage) {
         delayMessage.value?.apply {
-            log.error("DelayMessage timeout => {}", serializer(delayMessage))
+            log.error("DelayMessage timeout => ${serializer(delayMessage)}")
         }
     }
 }

@@ -52,7 +52,7 @@ object DelayTaskManager {
     operator fun get(key: String): DelayMessage? {
         val list = delayMessages.stream().filter { delayMessage: DelayMessage -> delayMessage.key == key }.collect(Collectors.toList())
         if(list.isEmpty()) {
-            log.error("DelayMessage error: key({}) is not found", key)
+            log.error("DelayMessage error: key($key) is not found")
             return null
         }
         return list[0]
@@ -72,7 +72,7 @@ object DelayTaskManager {
             return true
         }
         if(!ignoreCheckLog) {
-            log.error("Check key error: {} has save", key)
+            log.error("Check key error: $key has save")
         }
         return false
     }

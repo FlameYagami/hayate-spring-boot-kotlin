@@ -9,26 +9,27 @@ import java.util.concurrent.TimeUnit
 /**
  * Created by Flame on 2020/03/25.
  */
+
 abstract class BaseApi {
 
-    private object OkHttpClientHolder {
-        val instance = OkHttpClient.Builder()
-            .connectTimeout(DEFAULT_TIMEOUT, TimeUnit.MILLISECONDS)
-            .addInterceptor(LogInterceptor())
-            .build()
+    companion object {
+        const val DEFAULT_TIMEOUT = 5000L // 默认超时时间5秒
     }
 
-    companion object {
-
-        private const val DEFAULT_TIMEOUT = 5000L // 默认超时时间5秒
-
-        fun <T> apiService(baseUrl: String, tClass: Class<T>): T {
-            return Retrofit.Builder()
-                    .client(OkHttpClientHolder.instance)
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .baseUrl(baseUrl)
-                    .build()
-                    .create(tClass)
+    inline val okHttpClient: OkHttpClient
+        get() {
+            return OkHttpClient.Builder()
+                .connectTimeout(DEFAULT_TIMEOUT, TimeUnit.MILLISECONDS)
+                .addInterceptor(LogInterceptor())
+                .build()
         }
+
+    inline fun <reified T> service(baseUrl: String): T {
+        return Retrofit.Builder()
+            .client(okHttpClient)
+            .addConverterFactory(GsonConverterFactory.create())
+            .baseUrl(baseUrl)
+            .build()
+            .create(T::class.java)
     }
 }

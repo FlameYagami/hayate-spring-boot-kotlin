@@ -81,6 +81,7 @@ subprojects {
         implementation("org.apache.commons:commons-lang3")
 
         testImplementation("org.springframework.boot:spring-boot-starter-test")
+        testImplementation("junit:junit:4.12")
 
         implementation("com.google.protobuf:protobuf-java:3.14.0")
     }
@@ -95,19 +96,10 @@ subprojects {
         withType<Test> {
             useJUnitPlatform()
         }
-    }
-
-    tasks.forEach { task ->
-        if (task.project.group != "com.hayate.app"){
-            tasks.withType<org.springframework.boot.gradle.tasks.bundling.BootJar> {
-                enabled = false
-            }
-            tasks.withType<Jar> {
-                enabled = true
-            }
+        withType<org.springframework.boot.gradle.tasks.bundling.BootJar> {
+            archiveFileName.set("hayate.jar")
         }
     }
 }
-
 
 

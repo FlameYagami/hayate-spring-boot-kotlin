@@ -45,7 +45,7 @@ object AesUtils {
             cipher.init(cipherMode, secretKeySpec, iv)
             cipher.doFinal(sourceText)
         } catch (e: Exception) {
-            log.error("AES crypto error: " + e.message)
+            log.error("AES crypto error: ${e.message}")
             byteArrayOf()
         }
     }

@@ -44,7 +44,7 @@ class UpgradeController @Autowired constructor(
     fun checkAppUpgrade(version: String, platform: String): ApiResult<Any> {
         val appVersion = iAppVersionService.findVersionByPlatform(platform)
         if (appVersion == null) {
-            log.error("Check app upgrade error: version is not found by platform({})", platform)
+            log.error("Check app upgrade error: version is not found by platform($platform)")
             return ApiResult.error(ResultStatus.FAILED)
         }
         val appVersionResponse = appVersion.convertToAppVersionResponse()

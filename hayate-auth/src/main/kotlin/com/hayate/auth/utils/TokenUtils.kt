@@ -28,7 +28,7 @@ object TokenUtils {
             }
             tokenArray[1].toLong()
         } catch(e: Exception) {
-            log.error("Token decrypt error: " + e.localizedMessage)
+            log.error("Token decrypt error: ${e.localizedMessage}")
             e.printStackTrace()
             0
         }

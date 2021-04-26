@@ -104,7 +104,7 @@ class MailService @Autowired constructor(
             true
         } catch (e: Exception) {
             e.printStackTrace()
-            log.error("Send mail error: {}", e.message)
+            log.error("Send mail error: ${e.message}")
             false
         }
     }

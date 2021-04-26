@@ -43,8 +43,8 @@ object RSAUtils {
             keyMap[PUBLIC_KEY] = keyPair.public
             keyMap[PRIVATE_KEY] = keyPair.private
             keyMap
-        } catch(e: Exception) {
-            log.error("GenKeyPair error => " + e.message)
+        } catch (e: Exception) {
+            log.error("GenKeyPair error => ${e.message}")
             keyMap
         }
     }
@@ -57,8 +57,8 @@ object RSAUtils {
             val cipher = Cipher.getInstance("RSA/ECB/NOPADDING")
             cipher.init(Cipher.DECRYPT_MODE, rsaPrivateKey)
             cipher.doFinal(bytes)
-        } catch(e: Exception) {
-            log.error("Decrypt by privateKey({}) error: {}", privateKey, e.message)
+        } catch (e: Exception) {
+            log.error("Decrypt by privateKey($privateKey) error: ${e.message}")
             byteArrayOf()
         }
     }

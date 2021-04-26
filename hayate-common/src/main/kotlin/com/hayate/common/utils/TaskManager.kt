@@ -27,10 +27,10 @@ object TaskManager {
             if(!executorService.awaitTermination(1000, TimeUnit.MILLISECONDS)) {
                 log.error("TaskManager executor did not terminate in the 1000ms time")
                 val droppedTasks = executorService.shutdownNow()
-                log.error("TaskManager executor was abruptly shutdown, {} tasks will not be executed", droppedTasks.size)
+                log.error("TaskManager executor was abruptly shutdown, ${droppedTasks.size} tasks will not be executed", )
             }
         } catch(e: Exception) {
-            log.error("TaskManager shutdown awaitTermination failed: {}", e.message)
+            log.error("TaskManager shutdown awaitTermination failed: ${e.message}")
             executorService.shutdownNow()
         }
         log.info("TaskManager shutdown finish")

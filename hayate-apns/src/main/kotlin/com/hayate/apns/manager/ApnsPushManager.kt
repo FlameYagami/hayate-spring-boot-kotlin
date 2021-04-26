@@ -44,7 +44,7 @@ object ApnsPushManager {
                     .setEventLoopGroup(eventLoopGroup)
                     .build()
         } catch (e: Exception) {
-            log.error("APNS client create error: credentials file set failed: {}", e.message)
+            log.error("APNS client create error: credentials file set failed: ${e.message}")
         }
     }
 
@@ -76,13 +76,13 @@ object ApnsPushManager {
         apnsClient.sendNotification(pushNotification)
                 .whenCompleteAsync { response: PushNotificationResponse<SimpleApnsPushNotification?>?, cause: Throwable ->
                     if (response == null) {
-                        log.error("iOS push notification error: push notification response is null: {} ", cause.message)
+                        log.error("iOS push notification error: push notification response is null: ${cause.message} ")
                         return@whenCompleteAsync
                     }
                     if (response.isAccepted) {
                         log.info("iOS({}) push notification accepted by APNS gateway.", token)
                     } else {
-                        log.error("iOS push notification error: device token({}) push notification rejected by the APNS gateway: {}", token, response.rejectionReason)
+                        log.error("iOS push notification error: device token($token) push notification rejected by the APNS gateway: ${response.rejectionReason}")
                         response.tokenInvalidationTimestamp.ifPresent { timestamp: Instant ->
                             log.error("\t and the token is invalid as of $timestamp")
                         }

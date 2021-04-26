@@ -9,7 +9,7 @@ import java.security.Key
  * Created by Flame on 2020/10/26.
  */
 object RSAUtilsTest {
-    private val rsaKeyMap: Map<String?, Key?> = genKeyPair()
+    private val rsaKeyMap: Map<String, Key> = genKeyPair()
 
     fun main(args: Array<String>) {
         try {

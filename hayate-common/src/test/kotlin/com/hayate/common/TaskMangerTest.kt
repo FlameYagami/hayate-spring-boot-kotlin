@@ -1,23 +1,27 @@
 package com.hayate.common
 
 import com.hayate.common.utils.TaskManager
-import org.junit.Test
+import org.junit.jupiter.api.Test
+import org.junit.runner.RunWith
+import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.junit4.SpringRunner
 
 /**
  * Created by Flame on 2021/01/25.
  */
+
 @RunWith(SpringRunner::class)
-@SpringBootTest(classes = HayateCommonApplication::class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(classes = [HayateCommonApplication::class], webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class TaskMangerTest {
+
     @Test
     fun test() {
-        TaskManager.INSTANCE.submit(Thread { testThead() })
+        TaskManager.submit(Thread { testThead() })
         try {
             Thread.sleep(5000)
         } catch (ignore: Exception) {
         }
-        TaskManager.INSTANCE.shutdown()
+        TaskManager.shutdown()
         try {
             Thread.currentThread().join()
         } catch (e: InterruptedException) {

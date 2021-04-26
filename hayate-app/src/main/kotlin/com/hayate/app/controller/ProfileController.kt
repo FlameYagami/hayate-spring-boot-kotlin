@@ -27,7 +27,7 @@ class ProfileController @Autowired constructor(
         private val log: Logger = LoggerFactory.getLogger(this::class.java)
     }
 
-    @Value("\${filePath.avatarBase}")
+    @Value("\${filePath.avatar}")
     private lateinit var avatarBasePath: String
 
     @Value("\${baseUrl.avatar}")
@@ -39,7 +39,7 @@ class ProfileController @Autowired constructor(
     fun fetchUserInfo(userId: Long): ApiResult<Any> {
         val user = iUserService.getById(userId)
         if (user == null) {
-            log.error("User info error: account userId({}) is not found", userId)
+            log.error("User info error: account userId($userId) is not found")
             return ApiResult.error(ResultStatus.ACCOUNT_NOT_FOUND)
         }
         val infoResponse = user.convertToInfoResponse()
@@ -74,7 +74,7 @@ class ProfileController @Autowired constructor(
     fun uploadAvatar(@ApiParam(value = "头像图片文件", required = true) @RequestParam("imageFile") imageFile: MultipartFile, userId: Long): ApiResult<Any> {
         val user = iUserService.getById(userId)
         if (user == null) {
-            log.error("Upload avatar error: account userId({}) is not found", userId)
+            log.error("Upload avatar error: account userId($userId) is not found")
             return ApiResult.error(ResultStatus.ACCOUNT_NOT_FOUND)
         }
         val oldAvatar = user.avatar

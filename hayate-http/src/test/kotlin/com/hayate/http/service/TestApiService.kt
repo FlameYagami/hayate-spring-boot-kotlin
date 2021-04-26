@@ -10,13 +10,14 @@ import retrofit2.http.Query
  */
 
 interface TestApiService {
+
+    companion object {
+        const val baseUrl = ""
+    }
+
     @GET("")
     fun checkUpdate(
         @Query("") platform: String,
         @Query("") version: String
     ): Call<UpdateInfo>
-
-    companion object {
-        const val baseUrl = ""
-    }
 }

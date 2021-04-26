@@ -8,6 +8,7 @@ dependencies {
     implementation(project(":hayate-common"))
     implementation(project(":hayate-auth"))
     implementation(project(":hayate-mail"))
+    implementation(project(":hayate-sms"))
     implementation(project(":hayate-apns"))
     implementation(project(":hayate-firebase"))
 

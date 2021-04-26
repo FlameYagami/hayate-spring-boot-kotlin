@@ -1,6 +1,13 @@
 group = "com.hayate.common"
 description = "通用模块"
 
+tasks.withType<org.springframework.boot.gradle.tasks.bundling.BootJar> {
+    enabled = false
+}
+tasks.withType<Jar> {
+    enabled = true
+}
+
 dependencies {
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
 

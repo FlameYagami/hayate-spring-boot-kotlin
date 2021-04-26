@@ -1,0 +1,4 @@
+spring:
+  profiles:
+    # 独立模块运行激活配置
+    active: sms
