@@ -40,6 +40,12 @@ spring:
       enabled: true
       max-file-size: 20MB
       max-request-size: 6MB
+  rabbitmq:
+    host: 127.0.0.1
+    port: 5672
+    username: guest
+    passowrd: guest
+    virtual-host: /
 
 mybatis-plus:
   configuration:

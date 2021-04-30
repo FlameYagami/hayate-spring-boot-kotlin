@@ -19,9 +19,10 @@ allprojects {
 
     repositories {
         maven {
-            url = uri("http://maven.aliyun.com/nexus/content/groups/public")
-            url = uri("https://jitpack.io")
+            url = uri("https://maven.aliyun.com/nexus/content/groups/public")
+            url = uri("https://maven.springframework.org/release")
             url = uri("https://maven.google.com")
+            url = uri("https://jitpack.io")
             url = uri("https://repo.spring.io/snapshot")
             url = uri("https://repo.spring.io/milestone")
         }
@@ -57,6 +58,7 @@ subprojects {
 
             set("springContextVersion", "5.3.6")
             set("springMailVersion", "2.4.5")
+            set("springRabbitmqVersion", "2.4.5")
 
             set("pushyVersion", "0.14.1")
             set("firebaseVersion", "6.14.0")
@@ -74,16 +76,18 @@ subprojects {
         implementation("org.springframework.boot:spring-boot-starter-data-redis")
         implementation("org.springframework.boot:spring-boot-starter-log4j2")
 
+        implementation("org.springframework.boot:spring-boot-starter-amqp:${ext.get("springRabbitmqVersion")}")
+
         implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml")
         implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
         implementation("org.apache.commons:commons-pool2")
         implementation("org.apache.commons:commons-lang3")
 
+        implementation("com.google.protobuf:protobuf-java:3.14.0")
+
         testImplementation("org.springframework.boot:spring-boot-starter-test")
         testImplementation("junit:junit:4.12")
-
-        implementation("com.google.protobuf:protobuf-java:3.14.0")
     }
 
     tasks {
