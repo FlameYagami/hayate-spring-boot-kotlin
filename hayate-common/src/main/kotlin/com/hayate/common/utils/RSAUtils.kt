@@ -17,7 +17,7 @@ import javax.crypto.Cipher
 
 object RSAUtils {
 
-    private val log: Logger = LoggerFactory.getLogger(this::class.java)
+    private val log = LoggerFactory.getLogger(this::class.java)
 
     /**
      * 加密算法RSA

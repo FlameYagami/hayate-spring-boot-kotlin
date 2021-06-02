@@ -8,7 +8,6 @@ import com.hayate.common.utils.FileUtils.deleteFile
 import com.hayate.common.utils.FileUtils.writeFile
 import com.hayate.common.utils.TimeUtils.getCurrentDate
 import io.swagger.annotations.*
-import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -24,7 +23,7 @@ class ProfileController @Autowired constructor(
 ) {
 
     companion object {
-        private val log: Logger = LoggerFactory.getLogger(this::class.java)
+        private val log = LoggerFactory.getLogger(this::class.java)
     }
 
     @Value("\${filePath.avatar}")
@@ -42,7 +41,7 @@ class ProfileController @Autowired constructor(
             log.error("User info error: account userId($userId) is not found")
             return ApiResult.error(ResultStatus.ACCOUNT_NOT_FOUND)
         }
-        val infoResponse = user.convertToInfoResponse()
+        val infoResponse = user.convertToUserInfoResponse("")
         return ApiResult.ok(infoResponse)
     }
 
@@ -79,7 +78,8 @@ class ProfileController @Autowired constructor(
         }
         val oldAvatar = user.avatar
         try {
-            val avatarFilename = GeneralConstant.AVATAR_PREFIX + userId + GeneralConstant.AVATAR_SEPARATOR + getCurrentDate("yyyyMMddHHmmss") + GeneralConstant.AVATAR_EXTENSION
+            val avatarFilename =
+                GeneralConstant.AVATAR_PREFIX + userId + GeneralConstant.AVATAR_SEPARATOR + getCurrentDate("yyyyMMddHHmmss") + GeneralConstant.AVATAR_EXTENSION
             val fileResult = writeFile(imageFile.bytes, avatarBasePath + avatarFilename)
             val dbResult = iUserService.changeAvatar(userId, avatarFilename)
             if (fileResult && dbResult) {

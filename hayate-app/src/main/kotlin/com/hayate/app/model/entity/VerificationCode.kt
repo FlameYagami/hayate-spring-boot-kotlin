@@ -8,7 +8,7 @@ import java.util.*
  * @date 2020-04-17 11:47
  */
 
-@TableName("t_ms_verification_code")
+@TableName("t_dab_verification_code")
 data class VerificationCode(
     val id: Long = 0,
     val account: String? = null,

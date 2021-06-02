@@ -9,7 +9,6 @@ import io.swagger.annotations.Api
 import io.swagger.annotations.ApiImplicitParam
 import io.swagger.annotations.ApiImplicitParams
 import io.swagger.annotations.ApiOperation
-import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -32,7 +31,7 @@ class UpgradeController @Autowired constructor(
     private lateinit var appBaseUrl: String
 
     companion object {
-        private val log: Logger = LoggerFactory.getLogger(this::class.java)
+        private val log = LoggerFactory.getLogger(this::class.java)
     }
 
     @ApiOperation(value = "检测APP版本升级", notes = "iOS/Android端APP检测是否有新版本需要升级")
@@ -47,18 +46,13 @@ class UpgradeController @Autowired constructor(
             log.error("Check app upgrade error: version is not found by platform($platform)")
             return ApiResult.error(ResultStatus.FAILED)
         }
-        val appVersionResponse = appVersion.convertToAppVersionResponse()
-        val updateFlag = if (CommonUtils.versionCompare(version, appVersion.version ?: "")) GeneralConstant.NEED_UPGRADE
-        else GeneralConstant.WITHOUT_UPGRADE
-        val forceFlag = if (CommonUtils.versionCompare(version, appVersion.forceVersion ?: "")) GeneralConstant.NEED_UPGRADE
-        else GeneralConstant.WITHOUT_UPGRADE
-        appVersionResponse.upgradeFlag = updateFlag
-        appVersionResponse.forceFlag = forceFlag
-        var downloadUrl = appVersion.url
-        if (platform == GeneralConstant.PLATFORM_ANDROID) {
-            downloadUrl = appBaseUrl + downloadUrl
+        val appVersionResponse = appVersion.convertToAppVersionResponse().apply {
+            upgradeFlag = if (CommonUtils.versionCompare(version, appVersion.version ?: "")) GeneralConstant.NEED_UPGRADE
+            else GeneralConstant.WITHOUT_UPGRADE
+            forceFlag = if (CommonUtils.versionCompare(version, appVersion.forceVersion ?: "")) GeneralConstant.NEED_UPGRADE
+            else GeneralConstant.WITHOUT_UPGRADE
+            downloadUrl = "$appBaseUrl${appVersion.url}"
         }
-        appVersionResponse.downloadUrl = downloadUrl
         return ApiResult.ok(appVersionResponse)
     }
 }

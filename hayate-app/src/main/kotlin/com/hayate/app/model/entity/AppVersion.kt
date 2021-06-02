@@ -8,7 +8,7 @@ import com.hayate.app.model.dto.AppVersionResponse
  * @date 2020-05-18 16:41
  */
 
-@TableName("t_ms_app_version")
+@TableName("t_dab_app_version")
 data class AppVersion(
     var id: Long = 0,
     var version: String?,

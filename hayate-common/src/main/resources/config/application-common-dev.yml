@@ -19,8 +19,7 @@ spring:
     druid:
       url: jdbc:mysql://39.108.79.150:3306/schwertkreuz?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=UTC&zeroDateTimeBehavior=convertToNull
       username: flame
-      password: ehG2zN/ATw6v5XmzlpxF40CZHHsTx1ZcVIVouw/o4lQE3MehlC8l7JziuR2H1STTj5vwfYPAJHa6k371aicrdg==
-      connection-properties: config.decrypt=true;config.decrypt.key=MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKDGJuYo4E0zNobLOQOdbeSpv4vQJJv+VaqA5UsCwloKu2th60+2P5V1XrXj7E4ayxThrVzN5lvI9zEjDYewmjcCAwEAAQ==
+      password: 4985216
       driver-class-name: com.mysql.cj.jdbc.Driver
       filters: config,stat,wall,slf4j
       initialSize: 5

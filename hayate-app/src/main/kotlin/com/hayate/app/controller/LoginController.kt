@@ -1,35 +1,24 @@
 package com.hayate.app.controller
 
-import com.hayate.app.constant.RegexConstant
 import com.hayate.app.constant.UserConstant
 import com.hayate.app.enums.ResultStatus
 import com.hayate.app.model.dto.ApiResult
 import com.hayate.app.model.dto.SignUpRequest
-import com.hayate.app.model.dto.UserResponse
 import com.hayate.app.model.entity.User
 import com.hayate.app.model.exception.ResultException
 import com.hayate.app.service.intf.IUserService
 import com.hayate.app.service.intf.IVerificationCodeService
-import com.hayate.app.utils.BcryptUtils
 import com.hayate.auth.manager.intf.AuthTokenManager
+import com.hayate.common.utils.BcryptUtils
 import com.hayate.mail.service.intf.IMailService
 import io.swagger.annotations.Api
 import io.swagger.annotations.ApiImplicitParam
 import io.swagger.annotations.ApiImplicitParams
 import io.swagger.annotations.ApiOperation
-import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.web.bind.annotation.*
 import java.util.*
-import java.util.regex.Matcher
-import java.util.regex.Pattern
-
-/**
- * @author Flame
- * @date 2020-03-14 11:10
- */
 
 @RestController
 @RequestMapping("/api")
@@ -42,22 +31,13 @@ class LoginController @Autowired constructor(
 ) {
 
     companion object {
-        private val log: Logger = LoggerFactory.getLogger(this::class.java)
+        private val log = LoggerFactory.getLogger(this::class.java)
     }
-
-    @Value("\${user.accountType}")
-    private val accountType: String? = null
 
     @ApiOperation(value = "注册账号", notes = "注册账号")
     @ApiImplicitParam(name = "request", value = "注册请求类", dataType = "SignUpRequest", required = true)
     @PostMapping("v1/sign-up")
     fun signUp(@RequestBody request: SignUpRequest): ApiResult<Any> {
-        // 检测账号有效性
-        if (!validateAccount(request.account.toString())) {
-            log.error("Sign up error: invalid account(${request.account})")
-            return ApiResult.error(ResultStatus.INVALID_ACCOUNT)
-        }
-
         // 检测用户是否存在
         if (iUserService.checkAccountExist(request.account.toString())) {
             log.error("Sign up error: account(${request.account}) already exist")
@@ -91,23 +71,16 @@ class LoginController @Autowired constructor(
     )
     @PatchMapping("v1/sign-in")
     fun signIn(account: String, password: String): ApiResult<Any> {
-        // 检测账号有效性
-        if (!validateAccount(account)) {
-            log.error("Sign in error: invalid account($account)")
-            return ApiResult.error(ResultStatus.INVALID_ACCOUNT)
+        return iUserService.findByAccount(account)?.takeIf {
+            password == it.password
+        }?.let {
+            val token = authTokenManager.createToken(it.id!!)
+            val response = it.convertToUserInfoResponse(token)
+            ApiResult.ok(response)
+        } ?: let {
+            log.error("Sign in error: account($account) or password error")
+            ApiResult.error(ResultStatus.ACCOUNT_OR_PASSWORD_ERROR)
         }
-        val user = iUserService.findByAccount(account)
-        if (user != null) {
-            val pwd = iUserService.decryptPassword(password)
-            if (BcryptUtils.match(pwd, user.password.toString())) {
-                val infoResponse = user.convertToInfoResponse()
-                val token = authTokenManager.createToken(user.id)
-                val userResponse = UserResponse(infoResponse, token)
-                return ApiResult.ok(userResponse)
-            }
-        }
-        log.error("Sign in error: account($account) or password error")
-        return ApiResult.error(ResultStatus.ACCOUNT_OR_PASSWORD_ERROR)
     }
 
     @ApiOperation(value = "退出登录", notes = "退出登录")
@@ -142,12 +115,6 @@ class LoginController @Autowired constructor(
     )
     @PostMapping("v1/send-verify-code")
     fun sendVerificationCode(account: String, sendType: String): ApiResult<Any> {
-        // 判断账号合不合法
-        if (!validateAccount(account)) {
-            log.error("Send verification code error: invalid account($account)")
-            return ApiResult.error(ResultStatus.INVALID_ACCOUNT)
-        }
-
         // 判断是注册还是忘记密码
         if (UserConstant.SIGN_UP_TYPE.equals(sendType, ignoreCase = true)) {
             if (iUserService.checkAccountExist(account)) {
@@ -167,11 +134,6 @@ class LoginController @Autowired constructor(
         // 发送验证码
         var sendResult = false
         val verificationCode = "999999"
-        if (UserConstant.ACCOUNT_PHONE_TYPE == accountType) {
-            sendResult = sendSMSVerificationCode(account, verificationCode)
-        } else if (UserConstant.ACCOUNT_EMAIL_TYPE == accountType) {
-            sendResult = sendEmailVerificationCode(account, verificationCode)
-        }
 
         // 存储验证码
         val dbResult: Boolean = iVerificationCodeService.saveVerificationCode(account, verificationCode)
@@ -189,12 +151,6 @@ class LoginController @Autowired constructor(
     )
     @GetMapping("v1/validate-forget-password-code")
     fun validateForgetPasswordCode(account: String, verificationCode: String): ApiResult<Any> {
-        // 检测账号有效性
-        if (!validateAccount(account)) {
-            log.error("Validate forget password verification code error: invalid account($account)")
-            return ApiResult.error(ResultStatus.INVALID_ACCOUNT)
-        }
-
         // 检测用户是否存在
         if (!iUserService.checkAccountExist(account)) {
             log.error("Validate forget password verification code error: account($account) is not found")
@@ -215,23 +171,10 @@ class LoginController @Autowired constructor(
     )
     @PatchMapping("v1/forget-password")
     fun forgetPassword(account: String, newPassword: String, verificationCode: String): ApiResult<Any> {
-        // 检测账号有效性
-        if (!validateAccount(account)) {
-            log.error("Forget Password error: invalid account($account)")
-            return ApiResult.error(ResultStatus.INVALID_ACCOUNT)
-        }
-
         // 检测用户是否存在
         if (!iUserService.checkAccountExist(account)) {
             log.error("Forget Password error: account($account) is not found")
             return ApiResult.error(ResultStatus.ACCOUNT_NOT_FOUND)
-        }
-
-        // 检测密码是否有效
-        val passwordResult = iUserService.validatePassword(newPassword)
-        if (!passwordResult.isValid) {
-            log.error("Forget Password error: invalid password(${passwordResult.password})")
-            return ApiResult.error(ResultStatus.INVALID_PASSWORD)
         }
 
         // 检测验证码的有效性
@@ -244,25 +187,6 @@ class LoginController @Autowired constructor(
         }
         log.error("Forget Password error: account($account) change password failed")
         return ApiResult.error(ResultStatus.FAILED)
-    }
-
-    // 校验账号合法性
-    private fun validateAccount(account: String): Boolean {
-        val accountMatcher: Matcher = when (accountType) {
-            UserConstant.ACCOUNT_PHONE_TYPE -> {
-                val phoneRegex = Pattern.compile(RegexConstant.PHONE_REGEX)
-                phoneRegex.matcher(account)
-            }
-            UserConstant.ACCOUNT_EMAIL_TYPE -> {
-                val emailRegex = Pattern.compile(RegexConstant.EMAIL_REGEX)
-                emailRegex.matcher(account)
-            }
-            else -> {
-                log.error("Account type error: accountType($accountType) can not match")
-                throw ResultException(ResultStatus.FAILED)
-            }
-        }
-        return accountMatcher.matches()
     }
 
     // 检测验证码的有效性
